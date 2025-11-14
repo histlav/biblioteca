@@ -466,7 +466,7 @@
             showAlert('Login realizado com sucesso! Redirecionando...', 'success');
               
             setTimeout(() => {  
-                window.location.href = 'biblioteca.html';  
+                window.location.href = 'principal.html';  
             }, 1000);  
         }
   
@@ -474,10 +474,11 @@
         window.addEventListener('DOMContentLoaded', async () => {  
             const { data: { session } } = await supabase.auth.getSession()  
             if (session) {  
-                window.location.href = 'biblioteca.html';  
+                window.location.href = 'principal.html';  
             }  
         });  
     </script>  
 </body>  
 
 </html>  
+
