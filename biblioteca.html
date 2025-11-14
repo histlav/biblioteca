@@ -1,162 +1,187 @@
-<!DOCTYPE html>  
+<!DOCTYPE html>    
 <html lang="pt-BR">
-  
-<head>  
-    <meta charset="UTF-8">  
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">  
-    <title>Minha Biblioteca Pessoal</title>  
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">  
-    <style>  
-        :root {  
-            --primary-color: #123021;  
-            --primary-color-light: #1a4731;  
-            --secondary-color: #cff3c2;  
-            --secondary-color-light: #e8f5e9;  
-            --accent-color: #d64000;  
-            --accent-color-light: #ff6a33;  
-            --text-dark: #123021;  
-            --text-light: #ffffff;  
-            --white: #ffffff;  
-            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);  
-            --border-radius: 8px;  
+    
+<head>    
+    <meta charset="UTF-8">    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">    
+    <title>Minha Biblioteca Pessoal</title>    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+      
+    <!-- SDK do Supabase -->  
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+      
+    <style>    
+        :root {    
+            --primary-color: #123021;    
+            --primary-color-light: #1a4731;    
+            --secondary-color: #cff3c2;    
+            --secondary-color-light: #e8f5e9;    
+            --accent-color: #d64000;    
+            --accent-color-light: #ff6a33;    
+            --text-dark: #123021;    
+            --text-light: #ffffff;    
+            --white: #ffffff;    
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);    
+            --border-radius: 8px;    
+        }
+    
+        * {    
+            margin: 0;    
+            padding: 0;    
+            box-sizing: border-box;    
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;    
+        }
+    
+        body {    
+            background-color: #f5f5f5;    
+            color: var(--text-dark);    
+            line-height: 1.6;    
+            min-height: 100vh;    
+        }
+    
+        header {    
+            background-color: var(--primary-color);    
+            color: var(--text-light);    
+            padding: 0;    
+            margin: 0;    
+            width: 100%;    
+            position: relative;    
+            overflow: hidden;    
+            height: 250px;    
+            display: flex;    
+            align-items: center;    
+            justify-content: center;    
+            box-shadow: var(--shadow);    
+        }
+    
+        .logo-container {    
+            text-align: center;    
+            z-index: 1;    
+        }
+    
+        h1 {    
+            font-size: 2.8rem;    
+            margin-bottom: 10px;    
+            color: var(--text-light);    
+        }
+    
+        .subtitle {    
+            color: var(--accent-color);    
+            font-size: 1.3rem;    
+            font-weight: bold;    
+        }
+    
+        .container {    
+            max-width: 1600px;    
+            margin: 0 auto;    
+            padding: 2rem 3rem;    
+        }
+    
+        .stats-container {    
+            display: grid;    
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));    
+            gap: 1.5rem;    
+            margin-bottom: 2rem;    
+        }
+    
+        .stat-card {    
+            background: white;    
+            padding: 1.5rem;    
+            border-radius: var(--border-radius);    
+            border-left: 5px solid var(--secondary-color);    
+            box-shadow: var(--shadow);    
+            text-align: center;    
+            transition: all 0.3s ease;    
+        }
+    
+        .stat-card:hover {    
+            transform: translateY(-5px);    
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);    
+        }
+    
+        .stat-card i {    
+            font-size: 2rem;    
+            color: var(--accent-color);    
+            margin-bottom: 0.5rem;    
+        }
+    
+        .stat-card h3 {    
+            font-size: 2rem;    
+            color: var(--primary-color);    
+            margin: 0.5rem 0;    
+        }
+    
+        .stat-card p {    
+            color: #666;    
+            font-size: 0.9rem;    
+        }
+    
+        .controls {    
+            background: white;    
+            padding: 1.5rem;    
+            border-radius: var(--border-radius);    
+            border-left: 5px solid var(--secondary-color);    
+            box-shadow: var(--shadow);    
+            margin-bottom: 2rem;    
+            display: flex;    
+            gap: 1rem;    
+            flex-wrap: wrap;    
+            align-items: center;    
+            justify-content: space-between;    
+        }
+    
+        .search-box {    
+            flex: 1;    
+            min-width: 250px;    
+            position: relative;    
+        }
+    
+        .search-box input {    
+            width: 100%;    
+            padding: 0.8rem 2.5rem 0.8rem 1rem;    
+            border: 2px solid #e9ecef;    
+            border-radius: 25px;    
+            font-size: 1rem;    
+            transition: border-color 0.3s;    
+        }
+    
+        .search-box input:focus {    
+            outline: none;    
+            border-color: var(--secondary-color);    
+        }
+    
+        .search-box i {    
+            position: absolute;    
+            right: 1rem;    
+            top: 50%;    
+            transform: translateY(-50%);    
+            color: #666;    
+        }
+    
+        .add-button {    
+            padding: 0.8rem 2rem;    
+            background-color: var(--accent-color);    
+            color: white;    
+            border: none;    
+            border-radius: 25px;    
+            font-size: 1rem;    
+            font-weight: 600;    
+            cursor: pointer;    
+            transition: all 0.3s;    
+            display: flex;    
+            align-items: center;    
+            gap: 0.5rem;    
+        }
+    
+        .add-button:hover {    
+            background-color: var(--accent-color-light);    
+            transform: translateY(-2px);    
+            box-shadow: 0 4px 12px rgba(214, 64, 0, 0.3);    
         }
   
-        * {  
-            margin: 0;  
-            padding: 0;  
-            box-sizing: border-box;  
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;  
-        }
-  
-        body {  
-            background-color: #f5f5f5;  
-            color: var(--text-dark);  
-            line-height: 1.6;  
-            min-height: 100vh;  
-        }
-  
-        header {  
-            background-color: var(--primary-color);  
-            color: var(--text-light);  
-            padding: 0;  
-            margin: 0;  
-            width: 100%;  
-            position: relative;  
-            overflow: hidden;  
-            height: 250px;  
-            display: flex;  
-            align-items: center;  
-            justify-content: center;  
-            box-shadow: var(--shadow);  
-        }
-  
-        .logo-container {  
-            text-align: center;  
-            z-index: 1;  
-        }
-  
-        h1 {  
-            font-size: 2.8rem;  
-            margin-bottom: 10px;  
-            color: var(--text-light);  
-        }
-  
-        .subtitle {  
-            color: var(--accent-color);  
-            font-size: 1.3rem;  
-            font-weight: bold;  
-        }
-  
-        .container {  
-            max-width: 1600px;  
-            margin: 0 auto;  
-            padding: 2rem 3rem;  
-        }
-  
-        .stats-container {  
-            display: grid;  
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));  
-            gap: 1.5rem;  
-            margin-bottom: 2rem;  
-        }
-  
-        .stat-card {  
-            background: white;  
-            padding: 1.5rem;  
-            border-radius: var(--border-radius);  
-            border-left: 5px solid var(--secondary-color);  
-            box-shadow: var(--shadow);  
-            text-align: center;  
-            transition: all 0.3s ease;  
-        }
-  
-        .stat-card:hover {  
-            transform: translateY(-5px);  
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);  
-        }
-  
-        .stat-card i {  
-            font-size: 2rem;  
-            color: var(--accent-color);  
-            margin-bottom: 0.5rem;  
-        }
-  
-        .stat-card h3 {  
-            font-size: 2rem;  
-            color: var(--primary-color);  
-            margin: 0.5rem 0;  
-        }
-  
-        .stat-card p {  
-            color: #666;  
-            font-size: 0.9rem;  
-        }
-  
-        .controls {  
-            background: white;  
-            padding: 1.5rem;  
-            border-radius: var(--border-radius);  
-            border-left: 5px solid var(--secondary-color);  
-            box-shadow: var(--shadow);  
-            margin-bottom: 2rem;  
-            display: flex;  
-            gap: 1rem;  
-            flex-wrap: wrap;  
-            align-items: center;  
-            justify-content: space-between;  
-        }
-  
-        .search-box {  
-            flex: 1;  
-            min-width: 250px;  
-            position: relative;  
-        }
-  
-        .search-box input {  
-            width: 100%;  
-            padding: 0.8rem 2.5rem 0.8rem 1rem;  
-            border: 2px solid #e9ecef;  
-            border-radius: 25px;  
-            font-size: 1rem;  
-            transition: border-color 0.3s;  
-        }
-  
-        .search-box input:focus {  
-            outline: none;  
-            border-color: var(--secondary-color);  
-        }
-  
-        .search-box i {  
-            position: absolute;  
-            right: 1rem;  
-            top: 50%;  
-            transform: translateY(-50%);  
-            color: #666;  
-        }
-  
-        .add-button {  
+        .logout-button {  
             padding: 0.8rem 2rem;  
-            background-color: var(--accent-color);  
+            background-color: #666;  
             color: white;  
             border: none;  
             border-radius: 25px;  
@@ -169,428 +194,454 @@
             gap: 0.5rem;  
         }
   
-        .add-button:hover {  
-            background-color: var(--accent-color-light);  
+        .logout-button:hover {  
+            background-color: #555;  
             transform: translateY(-2px);  
-            box-shadow: 0 4px 12px rgba(214, 64, 0, 0.3);  
         }
-  
-        .tabs {  
-            display: flex;  
-            gap: 1rem;  
-            margin-bottom: 2rem;  
-            flex-wrap: wrap;  
-            justify-content: center;  
+    
+        .tabs {    
+            display: flex;    
+            gap: 1rem;    
+            margin-bottom: 2rem;    
+            flex-wrap: wrap;    
+            justify-content: center;    
         }
-  
-        .tab-btn {  
-            padding: 1rem 2rem;  
-            border: 2px solid var(--secondary-color);  
-            background: white;  
-            color: var(--primary-color);  
-            border-radius: 25px;  
-            cursor: pointer;  
-            transition: all 0.3s;  
-            font-weight: 600;  
-            font-size: 1rem;  
-            display: flex;  
-            align-items: center;  
-            gap: 0.5rem;  
+    
+        .tab-btn {    
+            padding: 1rem 2rem;    
+            border: 2px solid var(--secondary-color);    
+            background: white;    
+            color: var(--primary-color);    
+            border-radius: 25px;    
+            cursor: pointer;    
+            transition: all 0.3s;    
+            font-weight: 600;    
+            font-size: 1rem;    
+            display: flex;    
+            align-items: center;    
+            gap: 0.5rem;    
         }
-  
-        .tab-btn.active,  
-        .tab-btn:hover {  
-            background: var(--secondary-color);  
-            transform: translateY(-2px);  
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);  
+    
+        .tab-btn.active,    
+        .tab-btn:hover {    
+            background: var(--secondary-color);    
+            transform: translateY(-2px);    
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);    
         }
-  
-        .books-grid {  
-            display: grid;  
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));  
-            gap: 1.5rem;  
+    
+        .books-grid {    
+            display: grid;    
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));    
+            gap: 1.5rem;    
         }
-  
-        .book-card {  
-            background: white;  
-            padding: 1.5rem;  
-            border-radius: var(--border-radius);  
-            border-left: 5px solid var(--secondary-color);  
-            box-shadow: var(--shadow);  
-            transition: all 0.3s ease;  
-            position: relative;  
+    
+        .book-card {    
+            background: white;    
+            padding: 1.5rem;    
+            border-radius: var(--border-radius);    
+            border-left: 5px solid var(--secondary-color);    
+            box-shadow: var(--shadow);    
+            transition: all 0.3s ease;    
+            position: relative;    
         }
-  
-        .book-card:hover {  
-            transform: translateY(-5px);  
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);  
+    
+        .book-card:hover {    
+            transform: translateY(-5px);    
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);    
         }
-  
-        .book-card.reading {  
-            border-left-color: var(--accent-color);  
+    
+        .book-card.lendo {    
+            border-left-color: var(--accent-color);    
         }
-  
-        .book-card h3 {  
-            color: var(--primary-color);  
-            margin-bottom: 0.5rem;  
-            font-size: 1.2rem;  
+    
+        .book-card h3 {    
+            color: var(--primary-color);    
+            margin-bottom: 0.5rem;    
+            font-size: 1.2rem;    
         }
-  
-        .book-card .author {  
-            color: #666;  
-            font-style: italic;  
-            margin-bottom: 1rem;  
+    
+        .book-card .author {    
+            color: #666;    
+            font-style: italic;    
+            margin-bottom: 1rem;    
         }
-  
-        .book-card .month-badge {  
-            display: inline-block;  
-            background: var(--secondary-color-light);  
-            color: var(--primary-color);  
-            padding: 0.3rem 0.8rem;  
-            border-radius: 15px;  
-            font-size: 0.85rem;  
-            margin-bottom: 1rem;  
+    
+        .book-card .month-badge {    
+            display: inline-block;    
+            background: var(--secondary-color-light);    
+            color: var(--primary-color);    
+            padding: 0.3rem 0.8rem;    
+            border-radius: 15px;    
+            font-size: 0.85rem;    
+            margin-bottom: 1rem;    
         }
-  
-        .book-card .actions {  
-            display: flex;  
-            gap: 0.5rem;  
-            margin-top: 1rem;  
+    
+        .book-card .actions {    
+            display: flex;    
+            gap: 0.5rem;    
+            margin-top: 1rem;    
         }
-  
-        .book-card .actions button {  
-            flex: 1;  
-            padding: 0.5rem;  
-            border: none;  
-            border-radius: 5px;  
-            cursor: pointer;  
-            font-size: 0.9rem;  
-            transition: all 0.3s;  
+    
+        .book-card .actions button {    
+            flex: 1;    
+            padding: 0.5rem;    
+            border: none;    
+            border-radius: 5px;    
+            cursor: pointer;    
+            font-size: 0.9rem;    
+            transition: all 0.3s;    
         }
-  
-        .btn-edit {  
-            background: var(--secondary-color);  
-            color: var(--primary-color);  
+    
+        .btn-edit {    
+            background: var(--secondary-color);    
+            color: var(--primary-color);    
         }
-  
-        .btn-edit:hover {  
-            background: #b8e6aa;  
+    
+        .btn-edit:hover {    
+            background: #b8e6aa;    
         }
-  
-        .btn-delete {  
-            background: #ffe0e0;  
-            color: #d32f2f;  
+    
+        .btn-delete {    
+            background: #ffe0e0;    
+            color: #d32f2f;    
         }
-  
-        .btn-delete:hover {  
-            background: #ffcdd2;  
+    
+        .btn-delete:hover {    
+            background: #ffcdd2;    
         }
-  
-        .btn-move {  
-            background: #e3f2fd;  
-            color: #1976d2;  
+    
+        .btn-move {    
+            background: #e3f2fd;    
+            color: #1976d2;    
         }
-  
-        .btn-move:hover {  
-            background: #bbdefb;  
+    
+        .btn-move:hover {    
+            background: #bbdefb;    
         }
-  
-        .modal {  
-            display: none;  
-            position: fixed;  
-            z-index: 1000;  
-            left: 0;  
-            top: 0;  
-            width: 100%;  
-            height: 100%;  
-            background-color: rgba(0, 0, 0, 0.6);  
-            backdrop-filter: blur(3px);  
+    
+        .modal {    
+            display: none;    
+            position: fixed;    
+            z-index: 1000;    
+            left: 0;    
+            top: 0;    
+            width: 100%;    
+            height: 100%;    
+            background-color: rgba(0, 0, 0, 0.6);    
+            backdrop-filter: blur(3px);    
         }
-  
-        .modal-content {  
-            background-color: white;  
-            margin: 5% auto;  
-            padding: 0;  
-            border-radius: 12px;  
-            width: 90%;  
-            max-width: 600px;  
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);  
-            animation: modalSlideIn 0.3s ease-out;  
+    
+        .modal-content {    
+            background-color: white;    
+            margin: 5% auto;    
+            padding: 0;    
+            border-radius: 12px;    
+            width: 90%;    
+            max-width: 600px;    
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);    
+            animation: modalSlideIn 0.3s ease-out;    
         }
-  
-        @keyframes modalSlideIn {  
-            from {  
-                opacity: 0;  
-                transform: translateY(-50px);  
-            }  
-            to {  
-                opacity: 1;  
-                transform: translateY(0);  
-            }  
+    
+        @keyframes modalSlideIn {    
+            from {    
+                opacity: 0;    
+                transform: translateY(-50px);    
+            }    
+            to {    
+                opacity: 1;    
+                transform: translateY(0);    
+            }    
         }
-  
-        .modal-header {  
-            background: linear-gradient(135deg, var(--primary-color), var(--primary-color-light));  
-            color: white;  
-            padding: 2rem;  
-            border-radius: 12px 12px 0 0;  
-            position: relative;  
+    
+        .modal-header {    
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-color-light));    
+            color: white;    
+            padding: 2rem;    
+            border-radius: 12px 12px 0 0;    
+            position: relative;    
         }
-  
-        .modal-header h2 {  
-            margin: 0;  
+    
+        .modal-header h2 {    
+            margin: 0;    
         }
-  
-        .close {  
-            position: absolute;  
-            right: 1.5rem;  
-            top: 50%;  
-            transform: translateY(-50%);  
-            color: white;  
-            font-size: 2rem;  
-            font-weight: bold;  
-            cursor: pointer;  
-            transition: all 0.3s ease;  
-            width: 40px;  
-            height: 40px;  
-            display: flex;  
-            align-items: center;  
-            justify-content: center;  
-            border-radius: 50%;  
-            background-color: rgba(255, 255, 255, 0.1);  
+    
+        .close {    
+            position: absolute;    
+            right: 1.5rem;    
+            top: 50%;    
+            transform: translateY(-50%);    
+            color: white;    
+            font-size: 2rem;    
+            font-weight: bold;    
+            cursor: pointer;    
+            transition: all 0.3s ease;    
+            width: 40px;    
+            height: 40px;    
+            display: flex;    
+            align-items: center;    
+            justify-content: center;    
+            border-radius: 50%;    
+            background-color: rgba(255, 255, 255, 0.1);    
         }
-  
-        .close:hover {  
-            background-color: rgba(255, 255, 255, 0.2);  
-            transform: translateY(-50%) scale(1.1);  
+    
+        .close:hover {    
+            background-color: rgba(255, 255, 255, 0.2);    
+            transform: translateY(-50%) scale(1.1);    
         }
-  
-        .modal-body {  
-            padding: 2rem;  
+    
+        .modal-body {    
+            padding: 2rem;    
         }
-  
-        .form-group {  
-            margin-bottom: 1.5rem;  
+    
+        .form-group {    
+            margin-bottom: 1.5rem;    
         }
-  
-        .form-group label {  
-            display: block;  
-            margin-bottom: 0.5rem;  
-            color: var(--primary-color);  
-            font-weight: 600;  
+    
+        .form-group label {    
+            display: block;    
+            margin-bottom: 0.5rem;    
+            color: var(--primary-color);    
+            font-weight: 600;    
         }
-  
-        .form-group input,  
-        .form-group select {  
-            width: 100%;  
-            padding: 0.8rem;  
-            border: 2px solid #e9ecef;  
-            border-radius: 8px;  
-            font-size: 1rem;  
-            transition: border-color 0.3s;  
+    
+        .form-group input,    
+        .form-group select {    
+            width: 100%;    
+            padding: 0.8rem;    
+            border: 2px solid #e9ecef;    
+            border-radius: 8px;    
+            font-size: 1rem;    
+            transition: border-color 0.3s;    
         }
-  
-        .form-group input:focus,  
-        .form-group select:focus {  
-            outline: none;  
-            border-color: var(--secondary-color);  
+    
+        .form-group input:focus,    
+        .form-group select:focus {    
+            outline: none;    
+            border-color: var(--secondary-color);    
         }
-  
-        .form-actions {  
-            display: flex;  
-            gap: 1rem;  
-            margin-top: 2rem;  
+    
+        .form-actions {    
+            display: flex;    
+            gap: 1rem;    
+            margin-top: 2rem;    
         }
-  
-        .form-actions button {  
-            flex: 1;  
-            padding: 1rem;  
-            border: none;  
-            border-radius: 8px;  
-            font-size: 1rem;  
-            font-weight: 600;  
-            cursor: pointer;  
-            transition: all 0.3s;  
+    
+        .form-actions button {    
+            flex: 1;    
+            padding: 1rem;    
+            border: none;    
+            border-radius: 8px;    
+            font-size: 1rem;    
+            font-weight: 600;    
+            cursor: pointer;    
+            transition: all 0.3s;    
         }
-  
-        .btn-save {  
-            background-color: var(--accent-color);  
-            color: white;  
+    
+        .btn-save {    
+            background-color: var(--accent-color);    
+            color: white;    
         }
-  
-        .btn-save:hover {  
-            background-color: var(--accent-color-light);  
+    
+        .btn-save:hover {    
+            background-color: var(--accent-color-light);    
         }
-  
-        .btn-cancel {  
-            background-color: #e9ecef;  
-            color: var(--text-dark);  
+    
+        .btn-cancel {    
+            background-color: #e9ecef;    
+            color: var(--text-dark);    
         }
-  
-        .btn-cancel:hover {  
-            background-color: #dee2e6;  
+    
+        .btn-cancel:hover {    
+            background-color: #dee2e6;    
         }
-  
-        .empty-state {  
-            text-align: center;  
-            padding: 4rem 2rem;  
-            color: #666;  
+    
+        .empty-state {    
+            text-align: center;    
+            padding: 4rem 2rem;    
+            color: #666;    
         }
-  
-        .empty-state i {  
-            font-size: 4rem;  
-            color: var(--secondary-color);  
-            margin-bottom: 1rem;  
+    
+        .empty-state i {    
+            font-size: 4rem;    
+            color: var(--secondary-color);    
+            margin-bottom: 1rem;    
         }
-  
-        .empty-state h3 {  
-            color: var(--primary-color);  
-            margin-bottom: 0.5rem;  
+    
+        .empty-state h3 {    
+            color: var(--primary-color);    
+            margin-bottom: 0.5rem;    
         }
-  
-        @media (max-width: 768px) {  
-            .container {  
-                padding: 1rem;  
+    
+        @media (max-width: 768px) {    
+            .container {    
+                padding: 1rem;    
             }
-  
-            h1 {  
-                font-size: 1.8rem;  
+    
+            h1 {    
+                font-size: 1.8rem;    
             }
-  
-            .stats-container {  
-                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));  
+    
+            .stats-container {    
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));    
             }
-  
-            .books-grid {  
-                grid-template-columns: 1fr;  
+    
+            .books-grid {    
+                grid-template-columns: 1fr;    
             }
-  
-            .controls {  
-                flex-direction: column;  
+    
+            .controls {    
+                flex-direction: column;    
             }
-  
-            .search-box {  
-                width: 100%;  
-            }  
-        }  
-    </style>  
+    
+            .search-box {    
+                width: 100%;    
+            }    
+        }    
+    </style>    
 </head>
-  
-<body>  
-    <header>  
-        <div class="logo-container">  
-            <h1>📚 Minha Biblioteca Pessoal</h1>  
-            <p class="subtitle">Organize suas leituras e acompanhe sua jornada literária</p>  
-        </div>  
+    
+<body>    
+    <header>    
+        <div class="logo-container">    
+            <h1>📚 Minha Biblioteca Pessoal</h1>    
+            <p class="subtitle">Organize suas leituras e acompanhe sua jornada literária</p>    
+        </div>    
     </header>
-  
-    <div class="container">  
-        <!-- Estatísticas -->  
-        <div class="stats-container">  
-            <div class="stat-card">  
-                <i class="fas fa-book"></i>  
-                <h3 id="totalBooks">0</h3>  
-                <p>Total de Livros</p>  
-            </div>  
-            <div class="stat-card">  
-                <i class="fas fa-clock"></i>  
-                <h3 id="toReadBooks">0</h3>  
-                <p>Para Ler</p>  
-            </div>  
-            <div class="stat-card">  
-                <i class="fas fa-book-open"></i>  
-                <h3 id="readingBooks">0</h3>  
-                <p>Lendo Agora</p>  
-            </div>  
-            <div class="stat-card">  
-                <i class="fas fa-check-circle"></i>  
-                <h3 id="readBooks">0</h3>  
-                <p>Lidos</p>  
-            </div>  
+    
+    <div class="container">    
+        <!-- Estatísticas -->    
+        <div class="stats-container">    
+            <div class="stat-card">    
+                <i class="fas fa-book"></i>    
+                <h3 id="totalBooks">0</h3>    
+                <p>Total de Livros</p>    
+            </div>    
+            <div class="stat-card">    
+                <i class="fas fa-clock"></i>    
+                <h3 id="toReadBooks">0</h3>    
+                <p>Para Ler</p>    
+            </div>    
+            <div class="stat-card">    
+                <i class="fas fa-book-open"></i>    
+                <h3 id="readingBooks">0</h3>    
+                <p>Lendo Agora</p>    
+            </div>    
+            <div class="stat-card">    
+                <i class="fas fa-check-circle"></i>    
+                <h3 id="readBooks">0</h3>    
+                <p>Lidos</p>    
+            </div>    
         </div>
-  
-        <!-- Controles -->  
-        <div class="controls">  
-            <div class="search-box">  
-                <input type="text" id="searchInput" placeholder="Buscar livros ou autores...">  
-                <i class="fas fa-search"></i>  
-            </div>  
-            <button class="add-button" onclick="openModal()">  
-                <i class="fas fa-plus"></i>  
-                Adicionar Livro  
+    
+        <!-- Controles -->    
+        <div class="controls">    
+            <div class="search-box">    
+                <input type="text" id="searchInput" placeholder="Buscar livros ou autores...">    
+                <i class="fas fa-search"></i>    
+            </div>    
+            <button class="add-button" onclick="openModal()">    
+                <i class="fas fa-plus"></i>    
+                Adicionar Livro    
             </button>  
-        </div>
-  
-        <!-- Abas -->  
-        <div class="tabs">  
-            <button class="tab-btn active" onclick="filterBooks('todos')" data-category="todos">  
-                <i class="fas fa-th"></i>  
-                Todos os Livros  
-            </button>  
-            <button class="tab-btn" onclick="filterBooks('para-ler')" data-category="para-ler">  
-                <i class="fas fa-clock"></i>  
-                Para Ler  
-            </button>  
-            <button class="tab-btn" onclick="filterBooks('lendo')" data-category="lendo">  
-                <i class="fas fa-book-open"></i>  
-                Lendo  
-            </button>  
-            <button class="tab-btn" onclick="filterBooks('lidos')" data-category="lidos">  
-                <i class="fas fa-check-circle"></i>  
-                Lidos  
+            <button class="logout-button" onclick="handleLogout()">  
+                <i class="fas fa-sign-out-alt"></i>  
+                Sair  
             </button>  
         </div>
-  
-        <!-- Grid de Livros -->  
-        <div class="books-grid" id="booksGrid"></div>  
+    
+        <!-- Abas -->    
+        <div class="tabs">    
+            <button class="tab-btn active" onclick="filterBooks('todos')" data-category="todos">    
+                <i class="fas fa-th"></i>    
+                Todos os Livros    
+            </button>    
+            <button class="tab-btn" onclick="filterBooks('para-ler')" data-category="para-ler">    
+                <i class="fas fa-clock"></i>    
+                Para Ler    
+            </button>    
+            <button class="tab-btn" onclick="filterBooks('lendo')" data-category="lendo">    
+                <i class="fas fa-book-open"></i>    
+                Lendo    
+            </button>    
+            <button class="tab-btn" onclick="filterBooks('lidos')" data-category="lidos">    
+                <i class="fas fa-check-circle"></i>    
+                Lidos    
+            </button>    
+        </div>
+    
+        <!-- Grid de Livros -->    
+        <div class="books-grid" id="booksGrid"></div>    
     </div>
-  
-    <!-- Modal -->  
-    <div id="bookModal" class="modal">  
-        <div class="modal-content">  
-            <div class="modal-header">  
-                <h2 id="modalTitle">Adicionar Livro</h2>  
-                <span class="close" onclick="closeModal()">&times;</span>  
-            </div>  
-            <div class="modal-body">  
-                <form id="bookForm">  
-                    <div class="form-group">  
-                        <label for="bookTitle">Título do Livro *</label>  
-                        <input type="text" id="bookTitle" required>  
-                    </div>  
-                    <div class="form-group">  
-                        <label for="bookAuthor">Autor *</label>  
-                        <input type="text" id="bookAuthor" required>  
-                    </div>  
-                    <div class="form-group">  
-                        <label for="bookStatus">Status *</label>  
-                        <select id="bookStatus" required>  
-                            <option value="para-ler">Para Ler</option>  
-                            <option value="lendo">Lendo</option>  
-                            <option value="lidos">Lido</option>  
-                        </select>  
-                    </div>  
-                    <div class="form-group">  
-                        <label for="bookMonth">Mês de Leitura (opcional)</label>  
-                        <input type="month" id="bookMonth">  
-                    </div>  
-                    <div class="form-actions">  
-                        <button type="button" class="btn-cancel" onclick="closeModal()">Cancelar</button>  
-                        <button type="submit" class="btn-save">Salvar</button>  
-                    </div>  
-                </form>  
-            </div>  
-        </div>  
+    
+    <!-- Modal -->    
+    <div id="bookModal" class="modal">    
+        <div class="modal-content">    
+            <div class="modal-header">    
+                <h2 id="modalTitle">Adicionar Livro</h2>    
+                <span class="close" onclick="closeModal()">&times;</span>    
+            </div>    
+            <div class="modal-body">    
+                <form id="bookForm">    
+                    <div class="form-group">    
+                        <label for="bookTitle">Título do Livro *</label>    
+                        <input type="text" id="bookTitle" required>    
+                    </div>    
+                    <div class="form-group">    
+                        <label for="bookAuthor">Autor *</label>    
+                        <input type="text" id="bookAuthor" required>    
+                    </div>    
+                    <div class="form-group">    
+                        <label for="bookStatus">Status *</label>    
+                        <select id="bookStatus" required>    
+                            <option value="para-ler">Para Ler</option>    
+                            <option value="lendo">Lendo</option>    
+                            <option value="lidos">Lido</option>    
+                        </select>    
+                    </div>    
+                    <div class="form-group">    
+                        <label for="bookMonth">Mês de Leitura (opcional)</label>    
+                        <input type="month" id="bookMonth">    
+                    </div>    
+                    <div class="form-actions">    
+                        <button type="button" class="btn-cancel" onclick="closeModal()">Cancelar</button>    
+                        <button type="submit" class="btn-save">Salvar</button>    
+                    </div>    
+                </form>    
+            </div>    
+        </div>    
     </div>
+    
+    <script>    
+        // ============================================  
+        // CONFIGURAÇÃO DO SUPABASE  
+        // ============================================  
+        // SUBSTITUA com as MESMAS credenciais do index.html  
+        const SUPABASE_URL = 'SUA_URL_AQUI'  // Ex: https://xxxxx.supabase.co  
+        const SUPABASE_KEY = 'SUA_CHAVE_PUBLICA_AQUI'  // Anon public key
+          
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY)
   
-    <script>  
-        let books = JSON.parse(localStorage.getItem('myBooks')) || [];  
+        let books = [];  
         let currentFilter = 'todos';  
-        let editingBookId = null;
+        let editingBookId = null;  
+        let currentUser = null;
   
-        // Inicializar  
-        document.addEventListener('DOMContentLoaded', () => {  
-            renderBooks();  
+        // ============================================  
+        // INICIALIZAÇÃO  
+        // ============================================  
+        document.addEventListener('DOMContentLoaded', async () => {  
+            // Verificar se está logado  
+            const { data: { session } } = await supabase.auth.getSession()
+              
+            if (!session) {  
+                window.location.href = 'index.html';  
+                return;  
+            }
+              
+            currentUser = session.user;
+              
+            // Carregar livros do Supabase  
+            await loadBooks();  
             updateStats();
               
             // Busca  
@@ -604,6 +655,122 @@
                 saveBook();  
             });  
         });
+  
+        // ============================================  
+        // FUNÇÕES DO SUPABASE  
+        // ============================================
+  
+        // CARREGAR livros do Supabase  
+        async function loadBooks() {  
+            const { data, error } = await supabase  
+                .from('books')  
+                .select('*')  
+                .eq('user_id', currentUser.id)  
+                .order('created_at', { ascending: false });
+              
+            if (error) {  
+                console.error('Erro ao carregar livros:', error);  
+                alert('Erro ao carregar livros. Verifique se a tabela foi criada no Supabase.');  
+                return;  
+            }
+              
+            books = data || [];  
+            renderBooks();  
+        }
+  
+        // SALVAR livro no Supabase  
+        async function saveBook() {  
+            const title = document.getElementById('bookTitle').value;  
+            const author = document.getElementById('bookAuthor').value;  
+            const status = document.getElementById('bookStatus').value;  
+            const month = document.getElementById('bookMonth').value;
+  
+            if (editingBookId) {  
+                // Atualizar livro existente  
+                const { error } = await supabase  
+                    .from('books')  
+                    .update({ title, author, status, month })  
+                    .eq('id', editingBookId);
+                  
+                if (error) {  
+                    alert('Erro ao atualizar livro: ' + error.message);  
+                    return;  
+                }  
+            } else {  
+                // Criar novo livro  
+                const { error } = await supabase  
+                    .from('books')  
+                    .insert([{  
+                        user_id: currentUser.id,  
+                        title,  
+                        author,  
+                        status,  
+                        month  
+                    }]);
+                  
+                if (error) {  
+                    alert('Erro ao adicionar livro: ' + error.message);  
+                    return;  
+                }  
+            }
+  
+            closeModal();  
+            await loadBooks();  
+            updateStats();  
+        }
+  
+        // DELETAR livro do Supabase  
+        async function deleteBook(id) {  
+            if (!confirm('Tem certeza que deseja remover este livro?')) return;
+              
+            const { error } = await supabase  
+                .from('books')  
+                .delete()  
+                .eq('id', id);
+              
+            if (error) {  
+                alert('Erro ao deletar livro: ' + error.message);  
+                return;  
+            }
+              
+            await loadBooks();  
+            updateStats();  
+        }
+  
+        // MOVER livro (atualizar status)  
+        async function moveBook(id) {  
+            const book = books.find(b => b.id === id);  
+            const statuses = ['para-ler', 'lendo', 'lidos'];  
+            const currentIndex = statuses.indexOf(book.status);  
+            const nextIndex = (currentIndex + 1) % statuses.length;
+              
+            const { error } = await supabase  
+                .from('books')  
+                .update({ status: statuses[nextIndex] })  
+                .eq('id', id);
+              
+            if (error) {  
+                alert('Erro ao mover livro: ' + error.message);  
+                return;  
+            }
+              
+            await loadBooks();  
+            updateStats();  
+        }
+  
+        // LOGOUT  
+        async function handleLogout() {  
+            const { error } = await supabase.auth.signOut()  
+            if (error) {  
+                alert('Erro ao sair: ' + error.message);  
+                return;  
+            }  
+            window.location.href = 'index.html';  
+        }
+  
+        // ============================================  
+        // FUNÇÕES DA INTERFACE  
+        // ============================================
   
         // Abrir modal  
         function openModal(bookId = null) {  
@@ -634,62 +801,10 @@
             editingBookId = null;  
         }
   
-        // Salvar livro  
-        function saveBook() {  
-            const title = document.getElementById('bookTitle').value;  
-            const author = document.getElementById('bookAuthor').value;  
-            const status = document.getElementById('bookStatus').value;  
-            const month = document.getElementById('bookMonth').value;
-  
-            if (editingBookId) {  
-                const index = books.findIndex(b => b.id === editingBookId);  
-                books[index] = { ...books[index], title, author, status, month };  
-            } else {  
-                const newBook = {  
-                    id: Date.now(),  
-                    title,  
-                    author,  
-                    status,  
-                    month,  
-                    addedDate: new Date().toISOString()  
-                };  
-                books.push(newBook);  
-            }
-  
-            localStorage.setItem('myBooks', JSON.stringify(books));  
-            closeModal();  
-            renderBooks();  
-            updateStats();  
-        }
-  
-        // Deletar livro  
-        function deleteBook(id) {  
-            if (confirm('Tem certeza que deseja remover este livro?')) {  
-                books = books.filter(b => b.id !== id);  
-                localStorage.setItem('myBooks', JSON.stringify(books));  
-                renderBooks();  
-                updateStats();  
-            }  
-        }
-  
-        // Mover livro para outra categoria  
-        function moveBook(id) {  
-            const book = books.find(b => b.id === id);  
-            const statuses = ['para-ler', 'lendo', 'lidos'];  
-            const currentIndex = statuses.indexOf(book.status);  
-            const nextIndex = (currentIndex + 1) % statuses.length;
-              
-            book.status = statuses[nextIndex];  
-            localStorage.setItem('myBooks', JSON.stringify(books));  
-            renderBooks();  
-            updateStats();  
-        }
-  
         // Filtrar livros  
         function filterBooks(category) {  
             currentFilter = category;
               
-            // Atualizar botões ativos  
             document.querySelectorAll('.tab-btn').forEach(btn => {  
                 btn.classList.remove('active');  
                 if (btn.dataset.category === category) {  
@@ -705,12 +820,10 @@
             const grid = document.getElementById('booksGrid');  
             let filteredBooks = books;
   
-            // Filtrar por categoria  
             if (currentFilter !== 'todos') {  
                 filteredBooks = filteredBooks.filter(b => b.status === currentFilter);  
             }
   
-            // Filtrar por busca  
             if (searchTerm) {  
                 filteredBooks = filteredBooks.filter(b =>   
                     b.title.toLowerCase().includes(searchTerm.toLowerCase()) ||  
@@ -730,12 +843,6 @@
             }
   
             grid.innerHTML = filteredBooks.map(book => {  
-                const statusLabels = {  
-                    'para-ler': 'Para Ler',  
-                    'lendo': 'Lendo Agora',  
-                    'lidos': 'Lido'  
-                };
-                  
                 const moveLabels = {  
                     'para-ler': 'Iniciar Leitura',  
                     'lendo': 'Marcar como Lido',  
@@ -792,7 +899,7 @@
                 closeModal();  
             }  
         });  
-    </script>  
+    </script>    
 </body>
-  
+    
 </html>  
