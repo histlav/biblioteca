@@ -5,11 +5,7 @@
     <meta charset="UTF-8">    
     <meta name="viewport" content="width=device-width, initial-scale=1.0">    
     <title>Minha Biblioteca Pessoal</title>    
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-      
-    <!-- SDK do Supabase -->  
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-      
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">    
     <style>    
         :root {    
             --primary-color: #123021;    
@@ -38,39 +34,7 @@
             line-height: 1.6;    
             min-height: 100vh;    
         }
-    
-        header {    
-            background-color: var(--primary-color);    
-            color: var(--text-light);    
-            padding: 0;    
-            margin: 0;    
-            width: 100%;    
-            position: relative;    
-            overflow: hidden;    
-            height: 250px;    
-            display: flex;    
-            align-items: center;    
-            justify-content: center;    
-            box-shadow: var(--shadow);    
-        }
-    
-        .logo-container {    
-            text-align: center;    
-            z-index: 1;    
-        }
-    
-        h1 {    
-            font-size: 2.8rem;    
-            margin-bottom: 10px;    
-            color: var(--text-light);    
-        }
-    
-        .subtitle {    
-            color: var(--accent-color);    
-            font-size: 1.3rem;    
-            font-weight: bold;    
-        }
-    
+  
         .container {    
             max-width: 1600px;    
             margin: 0 auto;    
@@ -178,26 +142,6 @@
             transform: translateY(-2px);    
             box-shadow: 0 4px 12px rgba(214, 64, 0, 0.3);    
         }
-  
-        .logout-button {  
-            padding: 0.8rem 2rem;  
-            background-color: #666;  
-            color: white;  
-            border: none;  
-            border-radius: 25px;  
-            font-size: 1rem;  
-            font-weight: 600;  
-            cursor: pointer;  
-            transition: all 0.3s;  
-            display: flex;  
-            align-items: center;  
-            gap: 0.5rem;  
-        }
-  
-        .logout-button:hover {  
-            background-color: #555;  
-            transform: translateY(-2px);  
-        }
     
         .tabs {    
             display: flex;    
@@ -250,7 +194,7 @@
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);    
         }
     
-        .book-card.lendo {    
+        .book-card.reading {    
             border-left-color: var(--accent-color);    
         }
     
@@ -477,10 +421,6 @@
                 padding: 1rem;    
             }
     
-            h1 {    
-                font-size: 1.8rem;    
-            }
-    
             .stats-container {    
                 grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));    
             }
@@ -501,13 +441,6 @@
 </head>
     
 <body>    
-    <header>    
-        <div class="logo-container">    
-            <h1>📚 Minha Biblioteca Pessoal</h1>    
-            <p class="subtitle">Organize suas leituras e acompanhe sua jornada literária</p>    
-        </div>    
-    </header>
-    
     <div class="container">    
         <!-- Estatísticas -->    
         <div class="stats-container">    
@@ -542,11 +475,7 @@
             <button class="add-button" onclick="openModal()">    
                 <i class="fas fa-plus"></i>    
                 Adicionar Livro    
-            </button>  
-            <button class="logout-button" onclick="handleLogout()">  
-                <i class="fas fa-sign-out-alt"></i>  
-                Sair  
-            </button>  
+            </button>    
         </div>
     
         <!-- Abas -->    
@@ -612,295 +541,215 @@
     </div>
     
     <script>    
-        // ============================================  
-        // CONFIGURAÇÃO DO SUPABASE  
-        // ============================================  
-        // SUBSTITUA com as MESMAS credenciais do index.html  
-        const SUPABASE_URL = 'https://frrsqyleqhmdzeipzfpf.supabase.co'  // Ex: https://xxxxx.supabase.co  
-        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZycnNxeWxlcWhtZHplaXB6ZnBmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjMxNDE0OTMsImV4cCI6MjA3ODcxNzQ5M30.a3PCQ2ihtR9jF71N0D84ly-tf9PkYtqYFnCIhmKdTZE'  // Anon public key
-          
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY)
-  
-        let books = [];  
-        let currentFilter = 'todos';  
-        let editingBookId = null;  
-        let currentUser = null;
-  
-        // ============================================  
-        // INICIALIZAÇÃO  
-        // ============================================  
-        document.addEventListener('DOMContentLoaded', async () => {  
-            // Verificar se está logado  
-            const { data: { session } } = await supabase.auth.getSession()
-              
-            if (!session) {  
-                window.location.href = 'index.html';  
-                return;  
-            }
-              
-            currentUser = session.user;
-              
-            // Carregar livros do Supabase  
-            await loadBooks();  
+        let books = JSON.parse(localStorage.getItem('myBooks')) || [];    
+        let currentFilter = 'todos';    
+        let editingBookId = null;
+    
+        // Inicializar    
+        document.addEventListener('DOMContentLoaded', () => {    
+            renderBooks();    
             updateStats();
-              
-            // Busca  
-            document.getElementById('searchInput').addEventListener('input', (e) => {  
-                renderBooks(e.target.value);  
+                
+            // Busca    
+            document.getElementById('searchInput').addEventListener('input', (e) => {    
+                renderBooks(e.target.value);    
             });
-  
-            // Submit do formulário  
-            document.getElementById('bookForm').addEventListener('submit', (e) => {  
-                e.preventDefault();  
-                saveBook();  
-            });  
+    
+            // Submit do formulário    
+            document.getElementById('bookForm').addEventListener('submit', (e) => {    
+                e.preventDefault();    
+                saveBook();    
+            });    
         });
-  
-        // ============================================  
-        // FUNÇÕES DO SUPABASE  
-        // ============================================
-  
-        // CARREGAR livros do Supabase  
-        async function loadBooks() {  
-            const { data, error } = await supabase  
-                .from('books')  
-                .select('*')  
-                .eq('user_id', currentUser.id)  
-                .order('created_at', { ascending: false });
-              
-            if (error) {  
-                console.error('Erro ao carregar livros:', error);  
-                alert('Erro ao carregar livros. Verifique se a tabela foi criada no Supabase.');  
-                return;  
-            }
-              
-            books = data || [];  
-            renderBooks();  
-        }
-  
-        // SALVAR livro no Supabase  
-        async function saveBook() {  
-            const title = document.getElementById('bookTitle').value;  
-            const author = document.getElementById('bookAuthor').value;  
-            const status = document.getElementById('bookStatus').value;  
-            const month = document.getElementById('bookMonth').value;
-  
-            if (editingBookId) {  
-                // Atualizar livro existente  
-                const { error } = await supabase  
-                    .from('books')  
-                    .update({ title, author, status, month })  
-                    .eq('id', editingBookId);
-                  
-                if (error) {  
-                    alert('Erro ao atualizar livro: ' + error.message);  
-                    return;  
-                }  
-            } else {  
-                // Criar novo livro  
-                const { error } = await supabase  
-                    .from('books')  
-                    .insert([{  
-                        user_id: currentUser.id,  
-                        title,  
-                        author,  
-                        status,  
-                        month  
-                    }]);
-                  
-                if (error) {  
-                    alert('Erro ao adicionar livro: ' + error.message);  
-                    return;  
-                }  
-            }
-  
-            closeModal();  
-            await loadBooks();  
-            updateStats();  
-        }
-  
-        // DELETAR livro do Supabase  
-        async function deleteBook(id) {  
-            if (!confirm('Tem certeza que deseja remover este livro?')) return;
-              
-            const { error } = await supabase  
-                .from('books')  
-                .delete()  
-                .eq('id', id);
-              
-            if (error) {  
-                alert('Erro ao deletar livro: ' + error.message);  
-                return;  
-            }
-              
-            await loadBooks();  
-            updateStats();  
-        }
-  
-        // MOVER livro (atualizar status)  
-        async function moveBook(id) {  
-            const book = books.find(b => b.id === id);  
-            const statuses = ['para-ler', 'lendo', 'lidos'];  
-            const currentIndex = statuses.indexOf(book.status);  
-            const nextIndex = (currentIndex + 1) % statuses.length;
-              
-            const { error } = await supabase  
-                .from('books')  
-                .update({ status: statuses[nextIndex] })  
-                .eq('id', id);
-              
-            if (error) {  
-                alert('Erro ao mover livro: ' + error.message);  
-                return;  
-            }
-              
-            await loadBooks();  
-            updateStats();  
-        }
-  
-        // LOGOUT  
-        async function handleLogout() {  
-            const { error } = await supabase.auth.signOut()  
-            if (error) {  
-                alert('Erro ao sair: ' + error.message);  
-                return;  
-            }  
-            window.location.href = 'index.html';  
-        }
-  
-        // ============================================  
-        // FUNÇÕES DA INTERFACE  
-        // ============================================
-  
-        // Abrir modal  
-        function openModal(bookId = null) {  
-            const modal = document.getElementById('bookModal');  
+    
+        // Abrir modal    
+        function openModal(bookId = null) {    
+            const modal = document.getElementById('bookModal');    
             const form = document.getElementById('bookForm');
-              
-            if (bookId) {  
-                const book = books.find(b => b.id === bookId);  
-                document.getElementById('modalTitle').textContent = 'Editar Livro';  
-                document.getElementById('bookTitle').value = book.title;  
-                document.getElementById('bookAuthor').value = book.author;  
-                document.getElementById('bookStatus').value = book.status;  
-                document.getElementById('bookMonth').value = book.month || '';  
-                editingBookId = bookId;  
-            } else {  
-                document.getElementById('modalTitle').textContent = 'Adicionar Livro';  
-                form.reset();  
-                editingBookId = null;  
+                
+            if (bookId) {    
+                const book = books.find(b => b.id === bookId);    
+                document.getElementById('modalTitle').textContent = 'Editar Livro';    
+                document.getElementById('bookTitle').value = book.title;    
+                document.getElementById('bookAuthor').value = book.author;    
+                document.getElementById('bookStatus').value = book.status;    
+                document.getElementById('bookMonth').value = book.month || '';    
+                editingBookId = bookId;    
+            } else {    
+                document.getElementById('modalTitle').textContent = 'Adicionar Livro';    
+                form.reset();    
+                editingBookId = null;    
             }
-              
-            modal.style.display = 'block';  
+                
+            modal.style.display = 'block';    
         }
-  
-        // Fechar modal  
-        function closeModal() {  
-            document.getElementById('bookModal').style.display = 'none';  
-            document.getElementById('bookForm').reset();  
-            editingBookId = null;  
+    
+        // Fechar modal    
+        function closeModal() {    
+            document.getElementById('bookModal').style.display = 'none';    
+            document.getElementById('bookForm').reset();    
+            editingBookId = null;    
         }
-  
-        // Filtrar livros  
-        function filterBooks(category) {  
+    
+        // Salvar livro    
+        function saveBook() {    
+            const title = document.getElementById('bookTitle').value;    
+            const author = document.getElementById('bookAuthor').value;    
+            const status = document.getElementById('bookStatus').value;    
+            const month = document.getElementById('bookMonth').value;
+    
+            if (editingBookId) {    
+                const index = books.findIndex(b => b.id === editingBookId);    
+                books[index] = { ...books[index], title, author, status, month };    
+            } else {    
+                const newBook = {    
+                    id: Date.now(),    
+                    title,    
+                    author,    
+                    status,    
+                    month,    
+                    addedDate: new Date().toISOString()    
+                };    
+                books.push(newBook);    
+            }
+    
+            localStorage.setItem('myBooks', JSON.stringify(books));    
+            closeModal();    
+            renderBooks();    
+            updateStats();    
+        }
+    
+        // Deletar livro    
+        function deleteBook(id) {    
+            if (confirm('Tem certeza que deseja remover este livro?')) {    
+                books = books.filter(b => b.id !== id);    
+                localStorage.setItem('myBooks', JSON.stringify(books));    
+                renderBooks();    
+                updateStats();    
+            }    
+        }
+    
+        // Mover livro para outra categoria    
+        function moveBook(id) {    
+            const book = books.find(b => b.id === id);    
+            const statuses = ['para-ler', 'lendo', 'lidos'];    
+            const currentIndex = statuses.indexOf(book.status);    
+            const nextIndex = (currentIndex + 1) % statuses.length;
+                
+            book.status = statuses[nextIndex];    
+            localStorage.setItem('myBooks', JSON.stringify(books));    
+            renderBooks();    
+            updateStats();    
+        }
+    
+        // Filtrar livros    
+        function filterBooks(category) {    
             currentFilter = category;
-              
-            document.querySelectorAll('.tab-btn').forEach(btn => {  
-                btn.classList.remove('active');  
-                if (btn.dataset.category === category) {  
-                    btn.classList.add('active');  
-                }  
+                
+            // Atualizar botões ativos    
+            document.querySelectorAll('.tab-btn').forEach(btn => {    
+                btn.classList.remove('active');    
+                if (btn.dataset.category === category) {    
+                    btn.classList.add('active');    
+                }    
             });
-              
-            renderBooks();  
+                
+            renderBooks();    
         }
-  
-        // Renderizar livros  
-        function renderBooks(searchTerm = '') {  
-            const grid = document.getElementById('booksGrid');  
+    
+        // Renderizar livros    
+        function renderBooks(searchTerm = '') {    
+            const grid = document.getElementById('booksGrid');    
             let filteredBooks = books;
-  
-            if (currentFilter !== 'todos') {  
-                filteredBooks = filteredBooks.filter(b => b.status === currentFilter);  
+    
+            // Filtrar por categoria    
+            if (currentFilter !== 'todos') {    
+                filteredBooks = filteredBooks.filter(b => b.status === currentFilter);    
             }
-  
-            if (searchTerm) {  
-                filteredBooks = filteredBooks.filter(b =>   
-                    b.title.toLowerCase().includes(searchTerm.toLowerCase()) ||  
-                    b.author.toLowerCase().includes(searchTerm.toLowerCase())  
-                );  
+    
+            // Filtrar por busca    
+            if (searchTerm) {    
+                filteredBooks = filteredBooks.filter(b =>     
+                    b.title.toLowerCase().includes(searchTerm.toLowerCase()) ||    
+                    b.author.toLowerCase().includes(searchTerm.toLowerCase())    
+                );    
             }
-  
-            if (filteredBooks.length === 0) {  
-                grid.innerHTML = `  
-                    <div class="empty-state" style="grid-column: 1/-1;">  
-                        <i class="fas fa-book-open"></i>  
-                        <h3>Nenhum livro encontrado</h3>  
-                        <p>Adicione seu primeiro livro para começar!</p>  
-                    </div>  
-                `;  
-                return;  
+    
+            if (filteredBooks.length === 0) {    
+                grid.innerHTML = `    
+                    <div class="empty-state" style="grid-column: 1/-1;">    
+                        <i class="fas fa-book-open"></i>    
+                        <h3>Nenhum livro encontrado</h3>    
+                        <p>Adicione seu primeiro livro para começar!</p>    
+                    </div>    
+                `;    
+                return;    
             }
-  
-            grid.innerHTML = filteredBooks.map(book => {  
-                const moveLabels = {  
-                    'para-ler': 'Iniciar Leitura',  
-                    'lendo': 'Marcar como Lido',  
-                    'lidos': 'Ler Novamente'  
+    
+            grid.innerHTML = filteredBooks.map(book => {    
+                const statusLabels = {    
+                    'para-ler': 'Para Ler',    
+                    'lendo': 'Lendo Agora',    
+                    'lidos': 'Lido'    
                 };
-  
-                let monthBadge = '';  
-                if (book.month) {  
-                    const date = new Date(book.month + '-01');  
-                    const monthName = date.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });  
-                    monthBadge = `<span class="month-badge"><i class="fas fa-calendar"></i> ${monthName}</span>`;  
+                    
+                const moveLabels = {    
+                    'para-ler': 'Iniciar Leitura',    
+                    'lendo': 'Marcar como Lido',    
+                    'lidos': 'Ler Novamente'    
+                };
+    
+                let monthBadge = '';    
+                if (book.month) {    
+                    const date = new Date(book.month + '-01');    
+                    const monthName = date.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });    
+                    monthBadge = `<span class="month-badge"><i class="fas fa-calendar"></i> ${monthName}</span>`;    
                 }
-  
-                return `  
-                    <div class="book-card ${book.status}">  
-                        <h3>${book.title}</h3>  
-                        <p class="author">por ${book.author}</p>  
-                        ${monthBadge}  
-                        <div class="actions">  
-                            <button class="btn-move" onclick="moveBook(${book.id})" title="${moveLabels[book.status]}">  
-                                <i class="fas fa-arrow-right"></i> ${moveLabels[book.status]}  
-                            </button>  
-                            <button class="btn-edit" onclick="openModal(${book.id})" title="Editar">  
-                                <i class="fas fa-edit"></i>  
-                            </button>  
-                            <button class="btn-delete" onclick="deleteBook(${book.id})" title="Excluir">  
-                                <i class="fas fa-trash"></i>  
-                            </button>  
-                        </div>  
-                    </div>  
-                `;  
-            }).join('');  
+    
+                return `    
+                    <div class="book-card ${book.status}">    
+                        <h3>${book.title}</h3>    
+                        <p class="author">por ${book.author}</p>    
+                        ${monthBadge}    
+                        <div class="actions">    
+                            <button class="btn-move" onclick="moveBook(${book.id})" title="${moveLabels[book.status]}">    
+                                <i class="fas fa-arrow-right"></i> ${moveLabels[book.status]}    
+                            </button>    
+                            <button class="btn-edit" onclick="openModal(${book.id})" title="Editar">    
+                                <i class="fas fa-edit"></i>    
+                            </button>    
+                            <button class="btn-delete" onclick="deleteBook(${book.id})" title="Excluir">    
+                                <i class="fas fa-trash"></i>    
+                            </button>    
+                        </div>    
+                    </div>    
+                `;    
+            }).join('');    
         }
-  
-        // Atualizar estatísticas  
-        function updateStats() {  
-            document.getElementById('totalBooks').textContent = books.length;  
-            document.getElementById('toReadBooks').textContent = books.filter(b => b.status === 'para-ler').length;  
-            document.getElementById('readingBooks').textContent = books.filter(b => b.status === 'lendo').length;  
-            document.getElementById('readBooks').textContent = books.filter(b => b.status === 'lidos').length;  
+    
+        // Atualizar estatísticas    
+        function updateStats() {    
+            document.getElementById('totalBooks').textContent = books.length;    
+            document.getElementById('toReadBooks').textContent = books.filter(b => b.status === 'para-ler').length;    
+            document.getElementById('readingBooks').textContent = books.filter(b => b.status === 'lendo').length;    
+            document.getElementById('readBooks').textContent = books.filter(b => b.status === 'lidos').length;    
         }
-  
-        // Fechar modal ao clicar fora  
-        window.onclick = function(event) {  
-            const modal = document.getElementById('bookModal');  
-            if (event.target === modal) {  
-                closeModal();  
-            }  
+    
+        // Fechar modal ao clicar fora    
+        window.onclick = function(event) {    
+            const modal = document.getElementById('bookModal');    
+            if (event.target === modal) {    
+                closeModal();    
+            }    
         }
-  
-        // Fechar modal com ESC  
-        document.addEventListener('keydown', function(event) {  
-            if (event.key === 'Escape') {  
-                closeModal();  
-            }  
-        });  
+    
+        // Fechar modal com ESC    
+        document.addEventListener('keydown', function(event) {    
+            if (event.key === 'Escape') {    
+                closeModal();    
+            }    
+        });    
     </script>    
 </body>
     
 </html>  
-
